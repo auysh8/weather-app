@@ -1,0 +1,19 @@
+.search_bar{
+    background-color: var(--card-bg);
+    width: 30rem;
+    height: 3rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0rem 1rem;
+    border-radius: 50px;
+}
+
+#search_input{
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    font-weight: 500;
+    outline: none;
+}

@@ -1,0 +1,42 @@
+*{
+    text-decoration: none;
+    color: inherit;
+}
+
+.weather_card{
+    width: 30rem;
+    height: 10rem;
+    background-color: var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 10px 10px 30px rgba(106, 106, 106, 0.452);
+}
+
+.weather_icon{
+    font-size: 3rem;
+    color: white;
+}
+
+.weather_details{
+    display: flex;
+    flex-direction: column;
+}
+
+.cityname{
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.temp{
+    color: white;
+    font-size: 3rem;
+    font-weight: 900;
+}
+
+.sky{
+    color: white;
+}
