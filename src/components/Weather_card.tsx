@@ -1,9 +1,10 @@
 import React from "react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 import "./Weather_card.css";
 
-const Weather_card = ({ data ,  onBookmark , isBookmark}) => {
+const Weather_card = ({ data, onBookmark, isBookmark }) => {
   if (!data) {
     return null;
   }
@@ -39,20 +40,32 @@ const Weather_card = ({ data ,  onBookmark , isBookmark}) => {
   };
 
   return (
-    <div className="weather_card">
-      <button className="save_button" onClick={handleBookmark}>
-        <i className={isBookmark ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"}></i>
-      </button>
-      <div className="weather_details">
-        <span className="cityname">{cityName}</span>
-        <span className="temp">{temp}°C</span>
-        <span className="sky">{sky}</span>
-      </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 , transition : {duration : 0.5 , type : "tween"}}}
+      whileHover={{scale: 1.03 , transition : {duration : 0.2 , type : "spring"}}}
+      whileTap={{scale: 0.98}}
+      className="weather_card"
+    >
 
-      <div className="weather_icon">
-        <i className={getIcons(data.list[0].weather[0].id)}></i>
-      </div>
-    </div>
+        <button className="save_button" onClick={handleBookmark}>
+          <i
+            className={
+              isBookmark ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"
+            }
+          ></i>
+        </button>
+        <div className="weather_details">
+          <span className="cityname">{cityName}</span>
+          <span className="temp">{temp}°C</span>
+          <span className="sky">{sky}</span>
+        </div>
+
+        <div className="weather_icon">
+          <i className={getIcons(data.list[0].weather[0].id)}></i>
+        </div>
+
+    </motion.div>
   );
 };
 

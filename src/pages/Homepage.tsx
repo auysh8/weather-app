@@ -8,7 +8,7 @@ import Weather_card from "../components/Weather_card";
 const getSavedBookmarks = () => {
   return JSON.parse(localStorage.getItem("bookmarkedCities")) || [];
 };
-
+const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const Homepage = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState(null);
@@ -21,11 +21,12 @@ const Homepage = () => {
     const fetchBookmarkData = async () => {
       setIsLoading(true);
       if (bookmarks.length == 0) {
+        setIsLoading(false);
         return;
       }
 
       const promises = bookmarks.map(async (city) => {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=583052238ecee9e8ac1cd44dc8c1de86&units=metric`;
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -35,13 +36,12 @@ const Homepage = () => {
         } catch (error) {
           console.error(error);
           return null;
-        } finally {
-          setIsLoading(false);
         }
       });
 
       const results = await Promise.all(promises);
       setBookmarkDataList(results.filter((data) => data !== null));
+      setIsLoading(false);
     };
     fetchBookmarkData();
   }, []);
@@ -77,10 +77,9 @@ const Homepage = () => {
     }
   };
   const getWeather = async (city) => {
-    // setIsLoading(true);
     setWeatherData(null);
     setError(null);
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=583052238ecee9e8ac1cd44dc8c1de86&units=metric`;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -90,8 +89,6 @@ const Homepage = () => {
       setWeatherData(data);
     } catch (error) {
       alert(error.message);
-    } finally {
-      // setIsLoading(false);
     }
   };
 
@@ -109,6 +106,7 @@ const Homepage = () => {
   if(isLoading){
     return <div className="loading_screen">Loading...</div>;
   }
+  console.log(weatherData)
   return (
     <div>
       <div className="homepage">
@@ -122,7 +120,7 @@ const Homepage = () => {
         <Search_bar onSearch={getWeather} />
 
         {weatherData && (
-          <Link to={`/forecast/${weatherData.city.name}`}>
+          <Link key={weatherData.city.id} to={`/forecast/${weatherData.city.name}`}>
             <Weather_card
               data={weatherData}
               onBookmark={handleBookmark}
@@ -134,7 +132,7 @@ const Homepage = () => {
         <div className="bookmark">
           <span className="bookmark_head">Bookmarks</span>
           {bookmarkDataList.map((item) => (
-            <Link to={`/forecast/${item.city.name}`}>
+            <Link key={item.name} to={`/forecast/${item.city.name}`}>
               <Weather_card
                 data={item}
                 onBookmark={handleBookmark}

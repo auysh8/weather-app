@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Detailed_forecast.css";
 
+const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+
+
 const Detailed_forecast = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
@@ -10,7 +13,7 @@ const Detailed_forecast = () => {
   useEffect(() => {
     const getWeather = async () => {
       setIsLoading(true);
-      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=583052238ecee9e8ac1cd44dc8c1de86&units=metric`;
+      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
 
       try {
         const response = await fetch(url);

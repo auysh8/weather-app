@@ -14,13 +14,8 @@
     border-radius: 10px;
     box-shadow: 10px 10px 30px rgba(106, 106, 106, 0.452);
     position: relative;
-    transition: transform 0.4s , filter 0.4s;
 }
 
-.weather_card:hover{
-    transform: scale(1.03);
-    filter:contrast(4)
-}
 
 .weather_icon{
     font-size: 3rem;
