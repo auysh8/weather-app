@@ -13,6 +13,13 @@
     align-items: center;
     border-radius: 10px;
     box-shadow: 10px 10px 30px rgba(106, 106, 106, 0.452);
+    position: relative;
+    transition: transform 0.4s , filter 0.4s;
+}
+
+.weather_card:hover{
+    transform: scale(1.03);
+    filter:contrast(4)
 }
 
 .weather_icon{
@@ -39,4 +46,27 @@
 
 .sky{
     color: white;
+}
+
+.save_button{
+    background-color: rgba(0, 0, 0, 0.184);
+    border: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.1rem;
+    color: white;
+    border-radius: 50%;
+    border-radius: 10px;
+    height: 2.2rem;
+    width: 2.2rem;
+    transition: transform 0.1s;
+}
+
+.save_button:hover{
+    transform: scale(1.1);
+}
+
+.save_button:active{
+    transform: scale(0.99);
 }

@@ -1,14 +1,22 @@
 import React from "react";
+import { useState } from "react";
+
 import "./Weather_card.css";
 
-const Weather_card = ({ data }) => {
+const Weather_card = ({ data ,  onBookmark , isBookmark}) => {
   if (!data) {
     return null;
   }
-  console.log(data);
+
   const cityName = data.city.name;
   const temp = Math.round(data.list[0].main.temp);
   const sky = data.list[0].weather[0].description;
+  const handleBookmark = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    onBookmark(cityName);
+  };
   const getIcons = (conditionId) => {
     if (conditionId >= 200 && conditionId < 300) {
       return "fa-solid fa-cloud-bolt";
@@ -32,6 +40,9 @@ const Weather_card = ({ data }) => {
 
   return (
     <div className="weather_card">
+      <button className="save_button" onClick={handleBookmark}>
+        <i className={isBookmark ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"}></i>
+      </button>
       <div className="weather_details">
         <span className="cityname">{cityName}</span>
         <span className="temp">{temp}°C</span>

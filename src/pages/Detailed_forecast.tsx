@@ -29,7 +29,7 @@ const Detailed_forecast = () => {
   }, [city]);
 
   if (isLoading) {
-    return <div className="loading-screen">Loading....</div>;
+    return <div className="loading_screen">Loading....</div>;
   }
   if (weatherData) {
     const date = new Date(weatherData.list[0].dt * 1000);
@@ -48,7 +48,7 @@ const Detailed_forecast = () => {
           dailyData[date] = [];
           dailyIcon[date] = [];
         }
-        if (i.dt_txt.split(" ")[1] === "12:00:00") {
+        if (i.dt_txt.split(" ")[1] === "00:00:00") {
           dailyIcon[date].push(i.weather[0].id);
         }
         dailyData[date].push(i.main.temp);
