@@ -42,7 +42,7 @@ const Weather_card = ({ data, onBookmark, isBookmark }) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 , transition : {duration : 0.4, type : "tween"}}}
+      animate={{ opacity: 1, scale: 1 , transition : {duration : 0.2, type : "tween"}}}
       whileHover={{scale: 1.03 , transition : {duration : 0.2 , type : "spring"}}}
       whileTap={{scale: 0.98}}
       className="weather_card"

@@ -16,11 +16,9 @@ const Homepage = () => {
   const [bookmarks, setBookmarks] = useState(getSavedBookmarks());
   const [bookmarkDataList, setBookmarkDataList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  console.log(bookmarkDataList);
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
-      // setIsLoading(true);
       if (bookmarks.length == 0) {
         return;
       }
@@ -41,7 +39,6 @@ const Homepage = () => {
 
       const results = await Promise.all(promises);
       setBookmarkDataList(results.filter((data) => data !== null));
-      // setIsLoading(false);
     };
     fetchBookmarkData();
   }, [bookmarks]);
@@ -106,7 +103,7 @@ const Homepage = () => {
   if (isLoading) {
     return <div className="loading_screen">Loading...</div>;
   }
-  console.log(bookmarkDataList);
+  console.log(bookmarks, bookmarkDataList);
   return (
     <div>
       <div className="homepage">
@@ -135,17 +132,21 @@ const Homepage = () => {
         )}
 
         <div className="bookmark">
-          <span className="bookmark_head">Bookmarks</span>
+          {bookmarks.length > 0 && (
+            <span className="bookmark_head">Bookmarks</span>
+          )}
+
           <AnimatePresence>
-            {bookmarkDataList.map((item) => (
-              <Link key={item.city.id} to={`/forecast/${item.city.name}`}>
-                <Weather_card
-                  data={item}
-                  onBookmark={handleBookmark}
-                  isBookmark={bookmarks.includes(item.city.name)}
-                />
-              </Link>
-            ))}
+            {bookmarks.length > 0 &&
+              bookmarkDataList.map((item) => (
+                <Link key={item.city.id} to={`/forecast/${item.city.name}`}>
+                  <Weather_card
+                    data={item}
+                    onBookmark={handleBookmark}
+                    isBookmark={bookmarks.includes(item.city.name)}
+                  />
+                </Link>
+              ))}
           </AnimatePresence>
         </div>
       </div>

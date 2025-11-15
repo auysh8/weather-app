@@ -97,7 +97,6 @@ const Detailed_forecast = () => {
       return { dailyData, dailyIcon };
     };
     const { dailyData, dailyIcon } = processDailyData();
-    console.log(dailyIcon);
 
     const min_temp = (date) => {
       return Math.min(...dailyData[date]);
@@ -134,7 +133,6 @@ const Detailed_forecast = () => {
         return "fa-solid fa-circle";
       }
     };
-    console.log("Framer Motion:", motion);
 
     return (
       <div className="forecast_page">
