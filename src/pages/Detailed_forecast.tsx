@@ -1,14 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import "./Detailed_forecast.css";
 
 const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
-
 const Detailed_forecast = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
+  const [iconIndex, setIconIndex] = useState(0);
   const { city } = useParams();
+
+  const loadingIcons = [
+    "fa-solid fa-cloud-sun",
+    "fa-solid fa-cloud-rain",
+    "fa-solid fa-snowflake",
+    "fa-solid fa-wind",
+  ];
+
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setIconIndex((prevIndex) => (prevIndex + 1) % loadingIcons.length);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const getWeather = async () => {
@@ -21,6 +39,7 @@ const Detailed_forecast = () => {
           throw new Error("City not found");
         }
         const data = await response.json();
+        await new Promise((r) => setTimeout(r, 4000)); // 1.5s delay
         setWeatherData(data);
       } catch (error) {
         alert(error.message);
@@ -30,10 +49,29 @@ const Detailed_forecast = () => {
     };
     getWeather();
   }, [city]);
-
   if (isLoading) {
-    return <div className="loading_screen">Loading....</div>;
+    return (
+      <motion.div
+        className="loading_screen"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <AnimatePresence>
+          <motion.i
+            key={loadingIcons[iconIndex]} // A unique key is CRITICAL
+            className={loadingIcons[iconIndex]}
+            initial={{ opacity: 0}}
+            animate={{ opacity: 1}}
+            transition={{ duration: 1 }}
+            style={{position : "absolute" , fontSize : "3rem"}}
+          ></motion.i>
+        </AnimatePresence>
+      </motion.div>
+    );
   }
+
   if (weatherData) {
     const date = new Date(weatherData.list[0].dt * 1000);
     const day = date.toLocaleDateString("en-in", {
@@ -96,6 +134,8 @@ const Detailed_forecast = () => {
         return "fa-solid fa-circle";
       }
     };
+    console.log("Framer Motion:", motion);
+
     return (
       <div className="forecast_page">
         <div className="forecast_header">
@@ -159,9 +199,10 @@ const Detailed_forecast = () => {
           </ul>
         </div>
 
-
         <div className="detailed_grid">
-          <span id="grid1" className="section_title">Today's Highlights</span>
+          <span id="grid1" className="section_title">
+            Today's Highlights
+          </span>
           <div className="detailed_card">
             <div className="detailed_card_icon"></div>
             <div className="detailed_card_title">Feels Like</div>
@@ -207,8 +248,6 @@ const Detailed_forecast = () => {
         </div>
       </div>
     );
-  } else {
-    return <div className="error-screen">unable to fetch</div>;
   }
 };
 

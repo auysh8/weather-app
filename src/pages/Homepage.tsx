@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import Search_bar from "../components/Search_bar";
 import Weather_card from "../components/Weather_card";
+import { AnimatePresence } from "framer-motion";
 
 const getSavedBookmarks = () => {
   return JSON.parse(localStorage.getItem("bookmarkedCities")) || [];
@@ -19,9 +20,8 @@ const Homepage = () => {
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
-      setIsLoading(true);
+      // setIsLoading(true);
       if (bookmarks.length == 0) {
-        setIsLoading(false);
         return;
       }
 
@@ -41,10 +41,10 @@ const Homepage = () => {
 
       const results = await Promise.all(promises);
       setBookmarkDataList(results.filter((data) => data !== null));
-      setIsLoading(false);
+      // setIsLoading(false);
     };
     fetchBookmarkData();
-  }, []);
+  }, [bookmarks]);
 
   const onSuccess = (pos) => {
     const lat = pos.coords.latitude;
@@ -103,10 +103,10 @@ const Homepage = () => {
     localStorage.setItem("bookmarkedCities", JSON.stringify(updatedBookmarks));
   };
 
-  if(isLoading){
+  if (isLoading) {
     return <div className="loading_screen">Loading...</div>;
   }
-  console.log(weatherData)
+  console.log(bookmarkDataList);
   return (
     <div>
       <div className="homepage">
@@ -120,26 +120,33 @@ const Homepage = () => {
         <Search_bar onSearch={getWeather} />
 
         {weatherData && (
-          <Link key={weatherData.city.id} to={`/forecast/${weatherData.city.name}`}>
-            <Weather_card
-              data={weatherData}
-              onBookmark={handleBookmark}
-              isBookmark={bookmarks.includes(weatherData.city.name)}
-            />
-          </Link>
+          <AnimatePresence>
+            <Link
+              key={weatherData.city.id}
+              to={`/forecast/${weatherData.city.name}`}
+            >
+              <Weather_card
+                data={weatherData}
+                onBookmark={handleBookmark}
+                isBookmark={bookmarks.includes(weatherData.city.name)}
+              />
+            </Link>
+          </AnimatePresence>
         )}
 
         <div className="bookmark">
           <span className="bookmark_head">Bookmarks</span>
-          {bookmarkDataList.map((item) => (
-            <Link key={item.name} to={`/forecast/${item.city.name}`}>
-              <Weather_card
-                data={item}
-                onBookmark={handleBookmark}
-                isBookmark={bookmarks.includes(item.city.name)}
-              />
-            </Link>
-          ))}
+          <AnimatePresence>
+            {bookmarkDataList.map((item) => (
+              <Link key={item.city.id} to={`/forecast/${item.city.name}`}>
+                <Weather_card
+                  data={item}
+                  onBookmark={handleBookmark}
+                  isBookmark={bookmarks.includes(item.city.name)}
+                />
+              </Link>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>
