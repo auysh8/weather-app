@@ -98,10 +98,22 @@ Make sure:
 ## 📸 Screenshots
 
 
-![Homepage](./screenshots/home.png)
-Homepage
-![Forecast](./screenshots/forecast.png)
-Forecast page
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="./screenshots/home.png" alt="Homepage" width="400px" />
+        <br />
+        <b>📍 Homepage</b>
+      </td>
+      <td align="center">
+        <img src="./screenshots/forecast.png" alt="Forecast" width="400px" />
+        <br />
+        <b>🌦️ Forecast Page</b>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
