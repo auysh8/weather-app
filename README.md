@@ -1,39 +1,121 @@
-# Weather App
+# 🌦️ Weather App
 
-A simple weather application built with React, Vite, and TypeScript.
+A modern weather forecasting web app built with **React + TypeScript**, providing real-time weather data, hourly forecasts, and multi-day forecasts with a clean UI.
 
-## How to Run This Project Locally
+🔗 **Live Demo:**
+👉 [https://auysh8.github.io/weather-app/](https://auysh8.github.io/weather-app/)
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/auysh8/weather-app.git](https://github.com/auysh8/weather-app.git)
-    ```
+---
 
-2.  **Navigate to the project directory:**
-    ```bash
-    cd weather-app
-    ```
+## ✨ Features
 
-3.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+* 🌍 Search weather by city
+* 📍 Automatic location detection (via browser geolocation)
+* 🕒 Hourly forecast
+* 📆 Multi-day forecast
+* ⭐ Bookmark cities (saved in localStorage)
+* 🎞️ Smooth animations using Framer Motion
+* ⚡ Fast builds with Vite
+* 🧭 GitHub Pages deployment
 
-4.  **Get your API Key:**
-    This project requires an API key from OpenWeatherMap. You can get a free one here: [https://openweathermap.org/api](https://openweathermap.org/api)
+---
 
-5.  **Create your environment file:**
-    Copy the example file to create your own local `.env` file.
-    ```bash
-    cp .env.example .env
-    ```
-    *(Or, you can just create a new file named `.env` manually)*
+## 🛠️ Tech Stack
 
-6.  **Add your API key:**
-    Open the new `.env` file and paste in your API key. It should look like this:
-    `VITE_OPENWEATHER_API_KEY="paste_your_new_key_here"`
+* **Frontend:** React, TypeScript
+* **Build Tool:** Vite
+* **Routing:** React Router (HashRouter for GitHub Pages)
+* **Animations:** Framer Motion
+* **API:** OpenWeatherMap API
+* **Hosting:** GitHub Pages
 
-7.  **Run the app:**
-    ```bash
-    npm run dev
-    ```
+---
+
+## 🚀 Getting Started (Local Setup)
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/auysh8/weather-app.git
+cd weather-app
+```
+
+### 2️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Add environment variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_OPENWEATHER_API_KEY=your_api_key_here
+```
+
+You can get a free API key from:
+[https://openweathermap.org/api](https://openweathermap.org/api)
+
+### 4️⃣ Run the development server
+
+```bash
+npm run dev
+```
+
+The app will be available at:
+
+```
+http://localhost:5173
+```
+
+---
+
+## 🌐 Deployment (GitHub Pages)
+
+This project is deployed using the **gh-pages** branch.
+
+### Build & Deploy
+
+```bash
+npm run deploy
+```
+
+Make sure:
+
+* `vite.config.ts` contains:
+
+  ```ts
+  base: "/weather-app/"
+  ```
+* GitHub Pages settings are:
+
+  * **Branch:** `gh-pages`
+  * **Folder:** `/ (root)`
+
+---
+
+## 📸 Screenshots (optional)
+
+*Add screenshots here later if you want:*
+
+```md
+![Homepage](./screenshots/home.png)
+![Forecast](./screenshots/forecast.png)
+```
+
+---
+
+## 📚 What I Learned
+
+* Proper TypeScript typing for API responses
+* Handling `never` and `unknown` safely
+* Client-side routing on static hosting
+* GitHub Pages deployment workflow
+* Structuring a real-world React project
+
+---
+
+## 📄 License
+
+This project is open source and available under the **MIT License**.
