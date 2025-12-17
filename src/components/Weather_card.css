@@ -1,10 +1,6 @@
-*{
-    text-decoration: none;
-    color: inherit;
-}
-
 .weather_card{
     width: 30rem;
+    max-width: 100%;
     height: 10rem;
     background-color: var(--card-bg);
     display: flex;
@@ -14,8 +10,8 @@
     border-radius: 10px;
     box-shadow: 10px 10px 30px rgba(106, 106, 106, 0.452);
     position: relative;
+    box-sizing: border-box;
 }
-
 
 .weather_icon{
     font-size: 3rem;
@@ -41,6 +37,7 @@
 
 .sky{
     color: white;
+    font-size: 1rem;
 }
 
 .save_button{
@@ -51,11 +48,11 @@
     right: 10px;
     font-size: 1.1rem;
     color: white;
-    border-radius: 50%;
     border-radius: 10px;
     height: 2.2rem;
     width: 2.2rem;
     transition: transform 0.1s;
+    cursor: pointer;
 }
 
 .save_button:hover{
@@ -64,4 +61,102 @@
 
 .save_button:active{
     transform: scale(0.99);
+}
+
+/* Tablet screens (768px and below) */
+@media (max-width: 768px) {
+    .weather_card{
+        width: 100%;
+        height: 9rem;
+        padding: 1.5rem;
+    }
+
+    .weather_icon{
+        font-size: 2.5rem;
+    }
+
+    .cityname{
+        font-size: 1.1rem;
+    }
+
+    .temp{
+        font-size: 2.5rem;
+    }
+
+    .sky{
+        font-size: 0.95rem;
+    }
+
+    .save_button{
+        height: 2rem;
+        width: 2rem;
+        font-size: 1rem;
+    }
+}
+
+/* Mobile screens (480px and below) */
+@media (max-width: 480px) {
+    .weather_card{
+        height: 8rem;
+        padding: 1.2rem;
+        border-radius: 8px;
+    }
+
+    .weather_icon{
+        font-size: 2.2rem;
+    }
+
+    .cityname{
+        font-size: 1rem;
+    }
+
+    .temp{
+        font-size: 2.2rem;
+    }
+
+    .sky{
+        font-size: 0.875rem;
+    }
+
+    .save_button{
+        height: 1.8rem;
+        width: 1.8rem;
+        font-size: 0.9rem;
+        top: 8px;
+        right: 8px;
+    }
+}
+
+/* Small mobile screens (360px and below) */
+@media (max-width: 360px) {
+    .weather_card{
+        height: 7.5rem;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 8px 8px 20px rgba(106, 106, 106, 0.452);
+    }
+
+    .weather_icon{
+        font-size: 2rem;
+    }
+
+    .cityname{
+        font-size: 0.95rem;
+    }
+
+    .temp{
+        font-size: 2rem;
+    }
+
+    .sky{
+        font-size: 0.8rem;
+    }
+
+    .save_button{
+        height: 1.6rem;
+        width: 1.6rem;
+        font-size: 0.85rem;
+        top: 6px;
+        right: 6px;
+    }
 }
