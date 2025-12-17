@@ -99,8 +99,9 @@ Make sure:
 
 
 ```md
-![Homepage](./screenshots/home.png)
-![Forecast](./screenshots/forecast.png)
+![Homepage](https://raw.githubusercontent.com/auysh8/weather-app/main/screenshots/home.png)
+![Forecast](https://raw.githubusercontent.com/auysh8/weather-app/main/screenshots/forecast.png)
+
 ```
 
 ---
