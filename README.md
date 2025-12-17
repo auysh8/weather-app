@@ -97,7 +97,6 @@ Make sure:
 
 ## 📸 Screenshots (optional)
 
-*Add screenshots here later if you want:*
 
 ```md
 ![Homepage](./screenshots/home.png)
