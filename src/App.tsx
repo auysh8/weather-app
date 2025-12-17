@@ -1,5 +1,4 @@
-import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import Detailed_forecast from "./pages/Detailed_forecast";
 import './App.css'

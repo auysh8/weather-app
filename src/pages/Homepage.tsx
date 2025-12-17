@@ -1,21 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./Homepage.css";
 import { useEffect } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Search_bar from "../components/Search_bar";
 import Weather_card from "../components/Weather_card";
 import { AnimatePresence } from "framer-motion";
 
-const getSavedBookmarks = () => {
-  return JSON.parse(localStorage.getItem("bookmarkedCities")) || [];
+type WeatherData = {
+  city: {
+    id: number;
+    name: string;
+  };
+  list: any[];
 };
+
+const getSavedBookmarks = (): string[] => {
+  return JSON.parse(localStorage.getItem("bookmarkedCities") || "[]");
+};
+
 const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const Homepage = () => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState(null);
-  const [bookmarks, setBookmarks] = useState(getSavedBookmarks());
-  const [bookmarkDataList, setBookmarkDataList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [bookmarks, setBookmarks] = useState<string[]>(getSavedBookmarks());
+  const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
@@ -23,7 +30,7 @@ const Homepage = () => {
         return;
       }
 
-      const promises = bookmarks.map(async (city) => {
+      const promises = bookmarks.map(async (city: string) => {
         const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
         try {
           const response = await fetch(url);
@@ -43,13 +50,13 @@ const Homepage = () => {
     fetchBookmarkData();
   }, [bookmarks]);
 
-  const onSuccess = (pos) => {
+  const onSuccess = (pos: GeolocationPosition) => {
     const lat = pos.coords.latitude;
     const long = pos.coords.longitude;
     getCityName(lat, long);
   };
 
-  const onFailure = (error) => {
+  const onFailure = (error: GeolocationPositionError) => {
     console.error(error.message);
     getWeather("Delhi");
   };
@@ -63,7 +70,7 @@ const Homepage = () => {
     navigator.geolocation.getCurrentPosition(onSuccess, onFailure);
   }, []);
 
-  const getCityName = async (lat, long) => {
+  const getCityName = async (lat: number, long: number) => {
     const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${long}`;
     try {
       const response = await fetch(url);
@@ -73,9 +80,8 @@ const Homepage = () => {
       console.error(error);
     }
   };
-  const getWeather = async (city) => {
+  const getWeather = async (city: string) => {
     setWeatherData(null);
-    setError(null);
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
     try {
       const response = await fetch(url);
@@ -85,14 +91,16 @@ const Homepage = () => {
       const data = await response.json();
       setWeatherData(data);
     } catch (error) {
-      alert(error.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      }
     }
   };
 
-  const handleBookmark = (city) => {
+  const handleBookmark = (city: string) => {
     let updatedBookmarks;
     if (bookmarks.includes(city)) {
-      updatedBookmarks = bookmarks.filter((b) => b !== city);
+      updatedBookmarks = bookmarks.filter((b: string) => b !== city);
     } else {
       updatedBookmarks = [...bookmarks, city];
     }
@@ -100,10 +108,9 @@ const Homepage = () => {
     localStorage.setItem("bookmarkedCities", JSON.stringify(updatedBookmarks));
   };
 
-  if (isLoading) {
-    return <div className="loading_screen">Loading...</div>;
-  }
-  console.log(bookmarks, bookmarkDataList);
+  // if (isLoading) {
+  //   return <div className="loading_screen">Loading...</div>;
+  // }
   return (
     <div>
       <div className="homepage">

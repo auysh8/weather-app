@@ -1,16 +1,42 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import "./Detailed_forecast.css";
+
+type ForecastItem = {
+  dt: number;
+  dt_txt: string;
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+  };
+  weather: {
+    id: number;
+    description: string;
+  }[];
+  wind: {
+    speed: number;
+  };
+  visibility: number;
+  pop: number;
+};
+
+type WeatherData = {
+  city: {
+    name: string;
+  };
+  list: ForecastItem[];
+};
 
 const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 const Detailed_forecast = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [weatherData, setWeatherData] = useState(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [iconIndex, setIconIndex] = useState(0);
-  const { city } = useParams();
-
+  const { city } = useParams<{ city: string }>();
   const loadingIcons = [
     "fa-solid fa-cloud-sun",
     "fa-solid fa-cloud-rain",
@@ -42,8 +68,10 @@ const Detailed_forecast = () => {
         await new Promise((r) => setTimeout(r, 4000)); // 1.5s delay
         setWeatherData(data);
       } catch (error) {
-        alert(error.message);
-      } finally {
+        if (error instanceof Error) {
+          alert(error.message);
+        }
+      } finally{
         setIsLoading(false);
       }
     };
@@ -62,10 +90,10 @@ const Detailed_forecast = () => {
           <motion.i
             key={loadingIcons[iconIndex]} // A unique key is CRITICAL
             className={loadingIcons[iconIndex]}
-            initial={{ opacity: 0}}
-            animate={{ opacity: 1}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            style={{position : "absolute" , fontSize : "3rem"}}
+            style={{ position: "absolute", fontSize: "3rem" }}
           ></motion.i>
         </AnimatePresence>
       </motion.div>
@@ -81,9 +109,9 @@ const Detailed_forecast = () => {
     });
 
     const processDailyData = () => {
-      const dailyData = {};
-      const dailyIcon = {};
-      weatherData.list.forEach((i) => {
+      const dailyData: Record<string,number[]> = {};
+      const dailyIcon: Record<string , number[]> = {};
+      weatherData.list.forEach((i:ForecastItem) => {
         const date = i.dt_txt.split(" ")[0];
         if (!dailyData[date]) {
           dailyData[date] = [];
@@ -98,22 +126,22 @@ const Detailed_forecast = () => {
     };
     const { dailyData, dailyIcon } = processDailyData();
 
-    const min_temp = (date) => {
+    const min_temp = (date:string) => {
       return Math.min(...dailyData[date]);
     };
 
-    const max_temp = (date) => {
+    const max_temp = (date:string) => {
       return Math.max(...dailyData[date]);
     };
 
-    const getDay = (date) => {
+    const getDay = (date:string) => {
       const weekDay = new Date(date);
       return weekDay.toLocaleDateString("en-us", { weekday: "long" });
     };
 
-    const hourlyForecast = weatherData.list.slice(1, 17);
+    const hourlyForecast:ForecastItem[] = weatherData.list.slice(1, 17);
 
-    const getIcons = (conditionId) => {
+    const getIcons = (conditionId:number) => {
       if (conditionId >= 200 && conditionId < 300) {
         return "fa-solid fa-cloud-bolt";
       }
@@ -132,6 +160,7 @@ const Detailed_forecast = () => {
       if (conditionId === 800) {
         return "fa-solid fa-circle";
       }
+      return "fa-solid fa-cloud";
     };
 
     return (

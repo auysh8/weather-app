@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import "./Search_bar.css";
 
-const Search_bar = ({ onSearch }) => {
+type SearchBarProps = {
+  onSearch: (city: string) => void;
+};
+
+const Search_bar = ({ onSearch } : SearchBarProps) => {
   const [city, setCity] = useState("");
 
   const handleSearch = () => {
     onSearch(city);
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event : React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleSearch();
     }
