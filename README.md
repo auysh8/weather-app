@@ -95,11 +95,13 @@ Make sure:
 
 ---
 
-## 📸 Screenshots (optional)
+## 📸 Screenshots
 
 
 ![Homepage](./screenshots/home.png)
+Homepage
 ![Forecast](./screenshots/forecast.png)
+Forecast page
 
 ---
 
