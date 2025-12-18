@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./Homepage.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Search_bar from "../components/Search_bar";

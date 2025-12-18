@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import "./Weather_card.css";
 import type React from "react";
 
 type WeatherItem = {

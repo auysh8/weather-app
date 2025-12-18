@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import "./Detailed_forecast.css";
 
 type ForecastItem = {
   dt: number;

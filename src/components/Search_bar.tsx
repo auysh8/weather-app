@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Search_bar.css";
 
 type SearchBarProps = {
   onSearch: (city: string) => void;
