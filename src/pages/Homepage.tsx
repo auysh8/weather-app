@@ -6,27 +6,42 @@ import { AnimatePresence } from "framer-motion";
 
 // FIX 1: Update the type to match "Current Weather" API response
 type WeatherData = {
-  id: number;       // ID is at the root
-  name: string;     // Name is at the root
-  main: any;        // Contains temp, humidity etc.
-  weather: any[];   // Contains icon, description
-  sys: {            // Contains country code
-      country: string;
+  id: number; // ID is at the root
+  name: string; // Name is at the root
+  main: any; // Contains temp, humidity etc.
+  weather: any[]; // Contains icon, description
+  sys: {
+    // Contains country code
+    country: string;
   };
   wind: {
     speed: number;
     deg: number;
-  }
-};
-
-const getSavedBookmarks = (): string[] => {
-  return JSON.parse(localStorage.getItem("bookmarkedCities") || "[]");
+  };
 };
 
 const Homepage = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [bookmarks, setBookmarks] = useState<string[]>(getSavedBookmarks());
+  const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
+
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/bookmarks`,
+        );
+        const data = await response.json();
+        const cityNames = data.map((item : any) => item.city);
+        setBookmarks(cityNames);
+        console.log(bookmarks);
+      } catch (error) {
+        console.error(error);
+      }
+      fetchBookmarks();
+    };
+  } , []);
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
@@ -35,8 +50,7 @@ const Homepage = () => {
       }
 
       const promises = bookmarks.map(async (city: string) => {
-        // Note: Using 127.0.0.1 to avoid the localhost/ipv6 issue
-        const url = `http://localhost:5000/weather?city=${city}`;
+        const url = `${API_BASE_URL}/weather?city=${city}`;
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -50,7 +64,9 @@ const Homepage = () => {
       });
 
       const results = await Promise.all(promises);
-      setBookmarkDataList(results.filter((data) => data !== null) as WeatherData[]);
+      setBookmarkDataList(
+        results.filter((data) => data !== null) as WeatherData[],
+      );
     };
     fetchBookmarkData();
   }, [bookmarks]);
@@ -88,7 +104,7 @@ const Homepage = () => {
 
   const getWeather = async (city: string) => {
     setWeatherData(null);
-    const url = `http://127.0.0.1:5000/weather?city=${city}`;
+    const url = `${API_BASE_URL}/weather?city=${city}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -103,15 +119,35 @@ const Homepage = () => {
     }
   };
 
-  const handleBookmark = (city: string) => {
-    let updatedBookmarks;
-    if (bookmarks.includes(city)) {
-      updatedBookmarks = bookmarks.filter((b: string) => b !== city);
-    } else {
-      updatedBookmarks = [...bookmarks, city];
+  const handleBookmark = async (city: string) => {
+    const isBookmarked = bookmarks.includes(city);
+    try {
+      if (isBookmarked) {
+        const response = await fetch(
+          `${API_BASE_URL}/api/bookmarks/${city}`,
+          { method: "DELETE" },
+        );
+        if (response.ok) {
+          console.log("Bookmark removed");
+          setBookmarks(bookmarks.filter((cityname) => cityname != city));
+        }
+      } else {
+        const response = await fetch(
+          `${API_BASE_URL}/api/bookmarks`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ city: city }),
+          },
+        );
+        if (response.ok) {
+          console.log("Bookmark added");
+          setBookmarks([...bookmarks, city]);
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
-    setBookmarks(updatedBookmarks);
-    localStorage.setItem("bookmarkedCities", JSON.stringify(updatedBookmarks));
   };
 
   return (
@@ -129,10 +165,7 @@ const Homepage = () => {
         {weatherData && (
           <AnimatePresence>
             {/* FIX 2: Changed weatherData.city.id -> weatherData.id */}
-            <Link
-              key={weatherData.id} 
-              to={`/forecast/${weatherData.name}`} 
-            >
+            <Link key={weatherData.id} to={`/forecast/${weatherData.name}`}>
               <Weather_card
                 data={weatherData}
                 onBookmark={() => handleBookmark(weatherData.name)}
@@ -150,7 +183,7 @@ const Homepage = () => {
           <AnimatePresence>
             {bookmarks.length > 0 &&
               bookmarkDataList.map((item) => (
-                 /* FIX 3: Updated all '.city.' references here too */
+                /* FIX 3: Updated all '.city.' references here too */
                 <Link key={item.id} to={`/forecast/${item.name}`}>
                   <Weather_card
                     data={item}

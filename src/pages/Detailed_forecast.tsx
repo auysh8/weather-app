@@ -34,6 +34,8 @@ const Detailed_forecast = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [iconIndex, setIconIndex] = useState(0);
   const { city } = useParams<{ city: string }>();
+
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
   const loadingIcons = [
     "fa-solid fa-cloud-sun",
     "fa-solid fa-cloud-rain",
@@ -54,7 +56,7 @@ const Detailed_forecast = () => {
   useEffect(() => {
     const getWeather = async () => {
       setIsLoading(true);
-      const url = `http://127.0.0.1:5000/forecast?city=${city}`;
+      const url = `${API_BASE_URL}forecast?city=${city}`;
       try {
         const response = await fetch(url);
         if (!response.ok) {
