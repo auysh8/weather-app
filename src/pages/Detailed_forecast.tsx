@@ -29,8 +29,6 @@ type WeatherData = {
   list: ForecastItem[];
 };
 
-const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-
 const Detailed_forecast = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -56,8 +54,7 @@ const Detailed_forecast = () => {
   useEffect(() => {
     const getWeather = async () => {
       setIsLoading(true);
-      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-
+      const url = `http://127.0.0.1:5000/forecast?city=${city}`;
       try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -70,7 +67,7 @@ const Detailed_forecast = () => {
         if (error instanceof Error) {
           alert(error.message);
         }
-      } finally{
+      } finally {
         setIsLoading(false);
       }
     };
@@ -108,9 +105,9 @@ const Detailed_forecast = () => {
     });
 
     const processDailyData = () => {
-      const dailyData: Record<string,number[]> = {};
-      const dailyIcon: Record<string , number[]> = {};
-      weatherData.list.forEach((i:ForecastItem) => {
+      const dailyData: Record<string, number[]> = {};
+      const dailyIcon: Record<string, number[]> = {};
+      weatherData.list.forEach((i: ForecastItem) => {
         const date = i.dt_txt.split(" ")[0];
         if (!dailyData[date]) {
           dailyData[date] = [];
@@ -125,22 +122,22 @@ const Detailed_forecast = () => {
     };
     const { dailyData, dailyIcon } = processDailyData();
 
-    const min_temp = (date:string) => {
+    const min_temp = (date: string) => {
       return Math.min(...dailyData[date]);
     };
 
-    const max_temp = (date:string) => {
+    const max_temp = (date: string) => {
       return Math.max(...dailyData[date]);
     };
 
-    const getDay = (date:string) => {
+    const getDay = (date: string) => {
       const weekDay = new Date(date);
       return weekDay.toLocaleDateString("en-us", { weekday: "long" });
     };
 
-    const hourlyForecast:ForecastItem[] = weatherData.list.slice(1, 17);
+    const hourlyForecast: ForecastItem[] = weatherData.list.slice(1, 17);
 
-    const getIcons = (conditionId:number) => {
+    const getIcons = (conditionId: number) => {
       if (conditionId >= 200 && conditionId < 300) {
         return "fa-solid fa-cloud-bolt";
       }

@@ -1,23 +1,28 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Search_bar from "../components/Search_bar";
 import Weather_card from "../components/Weather_card";
 import { AnimatePresence } from "framer-motion";
 
+// FIX 1: Update the type to match "Current Weather" API response
 type WeatherData = {
-  city: {
-    id: number;
-    name: string;
+  id: number;       // ID is at the root
+  name: string;     // Name is at the root
+  main: any;        // Contains temp, humidity etc.
+  weather: any[];   // Contains icon, description
+  sys: {            // Contains country code
+      country: string;
   };
-  list: any[];
+  wind: {
+    speed: number;
+    deg: number;
+  }
 };
 
 const getSavedBookmarks = (): string[] => {
   return JSON.parse(localStorage.getItem("bookmarkedCities") || "[]");
 };
 
-const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const Homepage = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>(getSavedBookmarks());
@@ -25,12 +30,13 @@ const Homepage = () => {
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
-      if (bookmarks.length == 0) {
+      if (bookmarks.length === 0) {
         return;
       }
 
       const promises = bookmarks.map(async (city: string) => {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+        // Note: Using 127.0.0.1 to avoid the localhost/ipv6 issue
+        const url = `http://localhost:5000/weather?city=${city}`;
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -44,7 +50,7 @@ const Homepage = () => {
       });
 
       const results = await Promise.all(promises);
-      setBookmarkDataList(results.filter((data) => data !== null));
+      setBookmarkDataList(results.filter((data) => data !== null) as WeatherData[]);
     };
     fetchBookmarkData();
   }, [bookmarks]);
@@ -79,9 +85,10 @@ const Homepage = () => {
       console.error(error);
     }
   };
+
   const getWeather = async (city: string) => {
     setWeatherData(null);
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+    const url = `http://127.0.0.1:5000/weather?city=${city}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -107,9 +114,6 @@ const Homepage = () => {
     localStorage.setItem("bookmarkedCities", JSON.stringify(updatedBookmarks));
   };
 
-  // if (isLoading) {
-  //   return <div className="loading_screen">Loading...</div>;
-  // }
   return (
     <div>
       <div className="homepage">
@@ -124,14 +128,15 @@ const Homepage = () => {
 
         {weatherData && (
           <AnimatePresence>
+            {/* FIX 2: Changed weatherData.city.id -> weatherData.id */}
             <Link
-              key={weatherData.city.id}
-              to={`/forecast/${weatherData.city.name}`}
+              key={weatherData.id} 
+              to={`/forecast/${weatherData.name}`} 
             >
               <Weather_card
                 data={weatherData}
-                onBookmark={handleBookmark}
-                isBookmark={bookmarks.includes(weatherData.city.name)}
+                onBookmark={() => handleBookmark(weatherData.name)}
+                isBookmark={bookmarks.includes(weatherData.name)}
               />
             </Link>
           </AnimatePresence>
@@ -145,11 +150,12 @@ const Homepage = () => {
           <AnimatePresence>
             {bookmarks.length > 0 &&
               bookmarkDataList.map((item) => (
-                <Link key={item.city.id} to={`/forecast/${item.city.name}`}>
+                 /* FIX 3: Updated all '.city.' references here too */
+                <Link key={item.id} to={`/forecast/${item.name}`}>
                   <Weather_card
                     data={item}
-                    onBookmark={handleBookmark}
-                    isBookmark={bookmarks.includes(item.city.name)}
+                    onBookmark={() => handleBookmark(item.name)}
+                    isBookmark={bookmarks.includes(item.name)}
                   />
                 </Link>
               ))}
