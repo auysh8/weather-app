@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Search_bar from "../components/Search_bar";
 import Weather_card from "../components/Weather_card";
+import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify"; // <--- Don't forget this import!
 
 // FIX 1: Update the type to match "Current Weather" API response
 type WeatherData = {
@@ -24,28 +26,27 @@ const Homepage = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
-  const API_BASE_URL = "https://weather-app-za51.onrender.com";
+  const API_BASE_URL = "http://localhost:5000";
 
   useEffect(() => {
     const fetchBookmarks = async () => {
+      const url = `${API_BASE_URL}/api/bookmarks`;
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/bookmarks`,
-        );
+        const response = await fetch(url);
         const data = await response.json();
-        const cityNames = data.map((item : any) => item.city);
+        const cityNames = data.map((item: any) => item.city);
         setBookmarks(cityNames);
-        console.log(bookmarks);
       } catch (error) {
         console.error(error);
       }
-      fetchBookmarks();
     };
-  } , []);
+    fetchBookmarks();
+  }, []);
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
       if (bookmarks.length === 0) {
+        setBookmarkDataList([]); // Clear list if no bookmarks
         return;
       }
 
@@ -53,10 +54,11 @@ const Homepage = () => {
         const url = `${API_BASE_URL}/weather?city=${city}`;
         try {
           const response = await fetch(url);
-          if (!response.ok) {
-            return null;
-          }
-          return response.json();
+          if (!response.ok) return null;
+
+          const data = await response.json();
+          const aqi = await getAqi(data.coord.lat, data.coord.lon);
+          return { ...data, aqi };
         } catch (error) {
           console.error(error);
           return null;
@@ -64,10 +66,20 @@ const Homepage = () => {
       });
 
       const results = await Promise.all(promises);
-      setBookmarkDataList(
-        results.filter((data) => data !== null) as WeatherData[],
-      );
+
+      // Filter out failed requests (nulls)
+      const validResults = results.filter(
+        (data) => data !== null,
+      ) as WeatherData[];
+
+      // ---------------------------------------------------------
+      // 🟢 THE FIX: Sort alphabetically to stop "Jumping"
+      // ---------------------------------------------------------
+      validResults.sort((a, b) => a.name.localeCompare(b.name));
+
+      setBookmarkDataList(validResults);
     };
+
     fetchBookmarkData();
   }, [bookmarks]);
 
@@ -102,8 +114,18 @@ const Homepage = () => {
     }
   };
 
+  const getAqi = async (lat, lon) => {
+    const url = `${API_BASE_URL}/api/AQI?lat=${lat}&lon=${lon}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.list[0].main.aqi;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getWeather = async (city: string) => {
-    setWeatherData(null);
     const url = `${API_BASE_URL}/weather?city=${city}`;
     try {
       const response = await fetch(url);
@@ -111,10 +133,13 @@ const Homepage = () => {
         throw new Error("City not found");
       }
       const data = await response.json();
-      setWeatherData(data);
+      const aqi = await getAqi(data.coord.lat, data.coord.lon);
+      setWeatherData({ ...data, aqi });
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
+      if (error.response && error.response.status === 404) {
+        toast.error("City not found! 🤷‍♂️");
+      } else {
+        toast.error("Server error. Try again later.");
       }
     }
   };
@@ -123,23 +148,19 @@ const Homepage = () => {
     const isBookmarked = bookmarks.includes(city);
     try {
       if (isBookmarked) {
-        const response = await fetch(
-          `${API_BASE_URL}/api/bookmarks/${city}`,
-          { method: "DELETE" },
-        );
+        const response = await fetch(`${API_BASE_URL}/api/bookmarks/${city}`, {
+          method: "DELETE",
+        });
         if (response.ok) {
           console.log("Bookmark removed");
           setBookmarks(bookmarks.filter((cityname) => cityname != city));
         }
       } else {
-        const response = await fetch(
-          `${API_BASE_URL}/api/bookmarks`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ city: city }),
-          },
-        );
+        const response = await fetch(`${API_BASE_URL}/api/bookmarks`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ city: city }),
+        });
         if (response.ok) {
           console.log("Bookmark added");
           setBookmarks([...bookmarks, city]);
@@ -162,18 +183,26 @@ const Homepage = () => {
 
         <Search_bar onSearch={getWeather} />
 
-        {weatherData && (
-          <AnimatePresence>
-            {/* FIX 2: Changed weatherData.city.id -> weatherData.id */}
-            <Link key={weatherData.id} to={`/forecast/${weatherData.name}`}>
-              <Weather_card
-                data={weatherData}
-                onBookmark={() => handleBookmark(weatherData.name)}
-                isBookmark={bookmarks.includes(weatherData.name)}
-              />
-            </Link>
-          </AnimatePresence>
-        )}
+        <AnimatePresence mode="wait">
+          {weatherData && (
+            <motion.div
+              key={weatherData.id} // The key change triggers the animation!
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Link to={`/forecast/${weatherData.name}`}>
+                <Weather_card
+                  data={weatherData}
+                  aqi={weatherData.aqi}
+                  onBookmark={() => handleBookmark(weatherData.name)}
+                  isBookmark={bookmarks.includes(weatherData.name)}
+                />
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="bookmark">
           {bookmarks.length > 0 && (
@@ -183,14 +212,22 @@ const Homepage = () => {
           <AnimatePresence>
             {bookmarks.length > 0 &&
               bookmarkDataList.map((item) => (
-                /* FIX 3: Updated all '.city.' references here too */
-                <Link key={item.id} to={`/forecast/${item.name}`}>
-                  <Weather_card
-                    data={item}
-                    onBookmark={() => handleBookmark(item.name)}
-                    isBookmark={bookmarks.includes(item.name)}
-                  />
-                </Link>
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }} // Start invisible & lower
+                  animate={{ opacity: 1, y: 0 }} // Fade in & slide up
+                  exit={{ opacity: 0, y: -20 }} // Fade out & slide up
+                  layout // This prop creates a smooth shuffle animation!
+                >
+                  <Link to={`/forecast/${item.name}`}>
+                    <Weather_card
+                      data={item}
+                      aqi={item.aqi}
+                      onBookmark={() => handleBookmark(item.name)}
+                      isBookmark={bookmarks.includes(item.name)}
+                    />
+                  </Link>
+                </motion.div>
               ))}
           </AnimatePresence>
         </div>

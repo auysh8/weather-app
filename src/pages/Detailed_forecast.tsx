@@ -35,7 +35,7 @@ const Detailed_forecast = () => {
   const [iconIndex, setIconIndex] = useState(0);
   const { city } = useParams<{ city: string }>();
 
-  const API_BASE_URL = "https://weather-app-za51.onrender.com";
+  const API_BASE_URL = "http://localhost:5000";
   const loadingIcons = [
     "fa-solid fa-cloud-sun",
     "fa-solid fa-cloud-rain",
@@ -56,15 +56,16 @@ const Detailed_forecast = () => {
   useEffect(() => {
     const getWeather = async () => {
       setIsLoading(true);
-      const url = `${API_BASE_URL}forecast?city=${city}`;
+      const url = `${API_BASE_URL}/forecast?city=${city}`;
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("City not found");
         }
         const data = await response.json();
+        const aqi =await getAqi(data.city.coord.lat , data.city.coord.lon);
         await new Promise((r) => setTimeout(r, 4000)); // 1.5s delay
-        setWeatherData(data);
+        setWeatherData({...data , aqi});
       } catch (error) {
         if (error instanceof Error) {
           alert(error.message);
@@ -75,6 +76,29 @@ const Detailed_forecast = () => {
     };
     getWeather();
   }, [city]);
+  const handleAqiColor = (aqiValue) => {
+    if (aqiValue <= 1) return "#4ade80"; // Green (Good)
+    if (aqiValue === 2) return "#facc15"; // Yellow (Fair)
+    if (aqiValue === 3) return "#fb923c"; // Orange (Moderate)
+    return "#ef4444"; // Red (Poor)
+  };
+
+  const handleAQI = (value) => {
+    const labels = ["Unknown", "Good", "Fair", "Moderate", "Poor", "Very Poor"];
+    return labels[value];
+  };
+
+  const getAqi = async(lat , lon)=>{
+    const url = `${API_BASE_URL}/api/AQI?lat=${lat}&lon=${lon}`;
+    try{
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.list[0].main.aqi;
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
   if (isLoading) {
     return (
       <motion.div
@@ -181,6 +205,7 @@ const Detailed_forecast = () => {
             <span className="current_weather_description">
               {weatherData.list[0].weather[0].description}
             </span>
+            <span>AQI : <span style={{color : handleAqiColor(weatherData.aqi) , fontWeight : "bold"}}>{handleAQI(weatherData.aqi)}</span></span>
           </div>
         </div>
 
