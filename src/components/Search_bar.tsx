@@ -9,7 +9,7 @@ type SearchBarProps = {
 const Search_bar = ({ onSearch }: SearchBarProps) => {
   const [isDropdown, setIsDropdown] = useState(false);
   const [history, setHistory] = useState([]);
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
 
   const fetchHistory = async () => {
     try {

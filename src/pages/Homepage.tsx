@@ -26,7 +26,7 @@ const Homepage = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
 
   useEffect(() => {
     const fetchBookmarks = async () => {
