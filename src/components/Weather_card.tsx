@@ -29,6 +29,7 @@ type WeatherCardProps = {
   data: WeatherData;
   onBookmark: (city: string) => void;
   isBookmark: boolean;
+  aqi: number,
 };
 
 const Weather_card = ({
@@ -52,14 +53,14 @@ const Weather_card = ({
     onBookmark(cityName);
   };
 
-const handleAqiColor = (aqiValue) => {
+  const handleAqiColor = (aqiValue: number) => {
     if (aqiValue <= 1) return "#4ade80"; // Green (Good)
-    if (aqiValue === 2) return "#facc15"; // Yellow (Fair)
+    if (aqiValue == 2) return "#facc15"; // Yellow (Fair)
     if (aqiValue === 3) return "#fb923c"; // Orange (Moderate)
     return "#ef4444"; // Red (Poor)
   };
 
-  const handleAQI = (value) => {
+  const handleAQI = (value: number) => {
     const labels = ["Unknown", "Good", "Fair", "Moderate", "Poor", "Very Poor"];
     return labels[value];
   };
@@ -112,9 +113,9 @@ const handleAqiColor = (aqiValue) => {
             <FaWind color="black" />
           </span>
           <span style={{ color: "black" }}> AQI:</span>{" "}
-          <span 
-            className="font-bold" 
-            style={{ color: handleAqiColor(aqi) , fontWeight: "bold" }}
+          <span
+            className="font-bold"
+            style={{ color: handleAqiColor(aqi), fontWeight: "bold" }}
           >
             {handleAQI(aqi)}
           </span>

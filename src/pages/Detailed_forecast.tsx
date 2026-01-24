@@ -27,6 +27,7 @@ type WeatherData = {
     name: string;
   };
   list: ForecastItem[];
+  aqi: number;
 };
 
 const Detailed_forecast = () => {
@@ -76,19 +77,19 @@ const Detailed_forecast = () => {
     };
     getWeather();
   }, [city]);
-  const handleAqiColor = (aqiValue) => {
+  const handleAqiColor = (aqiValue: number) => {
     if (aqiValue <= 1) return "#4ade80"; // Green (Good)
     if (aqiValue === 2) return "#facc15"; // Yellow (Fair)
     if (aqiValue === 3) return "#fb923c"; // Orange (Moderate)
     return "#ef4444"; // Red (Poor)
   };
 
-  const handleAQI = (value) => {
+  const handleAQI = (value:number) => {
     const labels = ["Unknown", "Good", "Fair", "Moderate", "Poor", "Very Poor"];
     return labels[value];
   };
 
-  const getAqi = async(lat , lon)=>{
+  const getAqi = async(lat: number , lon:number)=>{
     const url = `${API_BASE_URL}/api/AQI?lat=${lat}&lon=${lon}`;
     try{
       const response = await fetch(url);

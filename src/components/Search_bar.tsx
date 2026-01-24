@@ -1,4 +1,3 @@
-import { div, span } from "framer-motion/client";
 import React, { useEffect, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 
@@ -6,9 +5,15 @@ type SearchBarProps = {
   onSearch: (city: string) => void;
 };
 
+interface HistroyItems{
+  _id: string,
+  city: string
+
+}
+
 const Search_bar = ({ onSearch }: SearchBarProps) => {
   const [isDropdown, setIsDropdown] = useState(false);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<HistroyItems[]>([]);
   const API_BASE_URL = "https://weather-app-za51.onrender.com";
 
   const fetchHistory = async () => {
@@ -26,7 +31,7 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
     fetchHistory();
   }, []);
 
-  const handleSearch = async (cityName) => {
+  const handleSearch = async (cityName: string) => {
     onSearch(cityName);
     setIsDropdown(false);
 
@@ -42,7 +47,7 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement> , cityName) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement> , cityName: string) => {
     if (event.key === "Enter") {
       handleSearch(cityName);
     }
@@ -69,7 +74,7 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
               setIsDropdown(false)
             }
           }}
-          onKeyDown={(event) => handleKeyDown(event , event.target.value)}
+          onKeyDown={(event) => handleKeyDown(event , (event.target as HTMLInputElement).value )}
         />
       </div>
       {isDropdown && (

@@ -20,6 +20,7 @@ type WeatherData = {
     speed: number;
     deg: number;
   };
+  aqi:number;
 };
 
 const Homepage = () => {
@@ -114,7 +115,7 @@ const Homepage = () => {
     }
   };
 
-  const getAqi = async (lat, lon) => {
+  const getAqi = async (lat:number, lon:number) => {
     const url = `${API_BASE_URL}/api/AQI?lat=${lat}&lon=${lon}`;
     try {
       const response = await fetch(url);
@@ -135,7 +136,7 @@ const Homepage = () => {
       const data = await response.json();
       const aqi = await getAqi(data.coord.lat, data.coord.lon);
       setWeatherData({ ...data, aqi });
-    } catch (error) {
+    } catch (error:any) {
       if (error.response && error.response.status === 404) {
         toast.error("City not found! 🤷‍♂️");
       } else {
