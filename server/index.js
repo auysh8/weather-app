@@ -14,7 +14,6 @@ const History = require("./models/History");
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan("dev"));
 
 mongoose
   .connect(process.env.MONGO_URI)

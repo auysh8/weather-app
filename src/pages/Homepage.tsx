@@ -5,6 +5,7 @@ import Weather_card from "../components/Weather_card";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify"; // <--- Don't forget this import!
+import Loader from "../components/Loader";
 
 // FIX 1: Update the type to match "Current Weather" API response
 type WeatherData = {
@@ -28,17 +29,26 @@ const Homepage = () => {
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
   const API_BASE_URL = "https://weather-app-za51.onrender.com";
+  const [appIsLoading , setAppIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
+      setAppIsLoading(true);
+      const myTimer = new Promise((resolve) => {
+        setTimeout(resolve , 2000)
+      })
       const url = `${API_BASE_URL}/api/bookmarks`;
       try {
-        const response = await fetch(url);
+        const apiPromise = fetch(url);
+        const [response] = await Promise.all([apiPromise , myTimer]);
         const data = await response.json();
         const cityNames = data.map((item: any) => item.city);
         setBookmarks(cityNames);
       } catch (error) {
         console.error(error);
+      }
+      finally{
+        setAppIsLoading(false);
       }
     };
     fetchBookmarks();
@@ -67,7 +77,6 @@ const Homepage = () => {
       });
 
       const results = await Promise.all(promises);
-
       // Filter out failed requests (nulls)
       const validResults = results.filter(
         (data) => data !== null,
@@ -171,6 +180,10 @@ const Homepage = () => {
       console.error(error);
     }
   };
+
+  if(appIsLoading){
+    return  <Loader/> 
+  }
 
   return (
     <div>
