@@ -21,7 +21,7 @@ type WeatherData = {
     speed: number;
     deg: number;
   };
-  aqi:number;
+  aqi: number;
 };
 
 const Homepage = () => {
@@ -29,25 +29,24 @@ const Homepage = () => {
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
   const API_BASE_URL = "https://weather-app-za51.onrender.com";
-  const [appIsLoading , setAppIsLoading] = useState(false);
+  const [appIsLoading, setAppIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
       setAppIsLoading(true);
       const myTimer = new Promise((resolve) => {
-        setTimeout(resolve , 2000)
-      })
+        setTimeout(resolve, 2000);
+      });
       const url = `${API_BASE_URL}/api/bookmarks`;
       try {
         const apiPromise = fetch(url);
-        const [response] = await Promise.all([apiPromise , myTimer]);
+        const [response] = await Promise.all([apiPromise, myTimer]);
         const data = await response.json();
         const cityNames = data.map((item: any) => item.city);
         setBookmarks(cityNames);
       } catch (error) {
         console.error(error);
-      }
-      finally{
+      } finally {
         setAppIsLoading(false);
       }
     };
@@ -91,7 +90,7 @@ const Homepage = () => {
     };
 
     fetchBookmarkData();
-  }, [bookmarks]);
+  }, []);
 
   const onSuccess = (pos: GeolocationPosition) => {
     const lat = pos.coords.latitude;
@@ -124,7 +123,7 @@ const Homepage = () => {
     }
   };
 
-  const getAqi = async (lat:number, lon:number) => {
+  const getAqi = async (lat: number, lon: number) => {
     const url = `${API_BASE_URL}/api/AQI?lat=${lat}&lon=${lon}`;
     try {
       const response = await fetch(url);
@@ -145,7 +144,7 @@ const Homepage = () => {
       const data = await response.json();
       const aqi = await getAqi(data.coord.lat, data.coord.lon);
       setWeatherData({ ...data, aqi });
-    } catch (error:any) {
+    } catch (error: any) {
       if (error.response && error.response.status === 404) {
         toast.error("City not found! 🤷‍♂️");
       } else {
@@ -154,7 +153,7 @@ const Homepage = () => {
     }
   };
 
-  const handleBookmark = async (city: string) => {
+  const handleBookmark = async (city: string, currentData?: WeatherData) => {
     const isBookmarked = bookmarks.includes(city);
     try {
       if (isBookmarked) {
@@ -163,7 +162,11 @@ const Homepage = () => {
         });
         if (response.ok) {
           console.log("Bookmark removed");
-          setBookmarks(bookmarks.filter((cityname) => cityname != city));
+          setBookmarks((prev) => prev.filter((cityname) => cityname != city));
+          setBookmarkDataList((prev) =>
+            prev.filter((item) => item.name !== city),
+          );
+          toast.info("Bookmark removed");
         }
       } else {
         const response = await fetch(`${API_BASE_URL}/api/bookmarks`, {
@@ -173,7 +176,14 @@ const Homepage = () => {
         });
         if (response.ok) {
           console.log("Bookmark added");
-          setBookmarks([...bookmarks, city]);
+          setBookmarks((prev) => [...prev, city]);
+
+          if(currentData){
+            setBookmarkDataList((prev) => {
+              const newList = [...prev , currentData];
+              return newList.sort((a , b) => a.name.localeCompare(b.name));
+            })
+          }
         }
       }
     } catch (error) {
@@ -181,8 +191,8 @@ const Homepage = () => {
     }
   };
 
-  if(appIsLoading){
-    return  <Loader/> 
+  if (appIsLoading) {
+    return <Loader />;
   }
 
   return (
