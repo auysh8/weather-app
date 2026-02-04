@@ -36,7 +36,7 @@ const Detailed_forecast = () => {
   const [iconIndex, setIconIndex] = useState(0);
   const { city } = useParams<{ city: string }>();
 
-  const API_BASE_URL = "https://weather-app-za51.onrender.com";
+  const API_BASE_URL = "http://localhost:5000";
   const loadingIcons = [
     "fa-solid fa-cloud-sun",
     "fa-solid fa-cloud-rain",

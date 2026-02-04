@@ -1,0 +1,142 @@
+/* Register_popup.module.css */
+
+/* 1. Main Card - Surface & Glass Effect */
+.register_container {
+    width: 100%;
+    max-width: 400px;
+    
+    /* Light glass background matching your theme */
+    background: rgba(255, 255, 255, 0.85); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    border: 1px solid white;
+    border-radius: 2.5rem; /* Large rounded corners */
+    padding: 2.5rem;
+    
+    box-shadow: 0 15px 40px -5px rgba(0, 0, 100, 0.1);
+    color: var(--md-sys-color-on-surface);
+    font-family: 'Poppins', sans-serif;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+/* 2. Header Section */
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.welcome_heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    letter-spacing: -0.5px;
+}
+
+.instructions {
+    font-size: 0.95rem;
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 400;
+}
+
+/* 3. Main Form Section */
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* 4. Input Groups (Username, Email, Password) */
+.main label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Label Text styling */
+.user_name, .input_head {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface-variant);
+    margin-left: 12px;
+}
+
+/* Input Field styling */
+.main input {
+    background: var(--md-sys-color-surface-container);
+    border: 2px solid transparent;
+    border-radius: 9999px; /* Pill shape */
+    padding: 1rem 1.5rem;
+    
+    color: var(--md-sys-color-on-surface);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.main input::placeholder {
+    color: var(--md-sys-color-outline);
+    opacity: 0.7;
+}
+
+/* Focus State */
+.main input:focus {
+    background: #ffffff;
+    border-color: rgba(0, 101, 142, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 101, 142, 0.1);
+}
+
+/* 5. Sign Up Button */
+.sign_in {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border-radius: 9999px;
+    border: none;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 101, 142, 0.3);
+}
+
+.sign_in:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 101, 142, 0.4);
+    background: #005a80;
+}
+
+/* 6. Footer Section */
+footer {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.signin_link {
+    color: var(--md-sys-color-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signin_link:hover {
+    text-decoration: underline;
+}

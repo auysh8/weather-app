@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import type React from "react";
 import { FaWind } from "react-icons/fa6";
+import { useState } from "react";
+import Login_popup from "./Login_popup";
 
 // FIX 1: Update the Type to match the Flat structure from Backend
 type WeatherData = {
@@ -29,7 +31,7 @@ type WeatherCardProps = {
   data: WeatherData;
   onBookmark: (city: string) => void;
   isBookmark: boolean;
-  aqi: number,
+  aqi: number;
 };
 
 const Weather_card = ({

@@ -5,7 +5,6 @@ import Weather_card from "../components/Weather_card";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify"; // <--- Don't forget this import!
-import Loader from "../components/Loader";
 
 // FIX 1: Update the type to match "Current Weather" API response
 type WeatherData = {
@@ -24,12 +23,32 @@ type WeatherData = {
   aqi: number;
 };
 
-const Homepage = () => {
+const Homepage = ({ onClick }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
-  const API_BASE_URL = "https://weather-app-za51.onrender.com";
+  const API_BASE_URL = "http://localhost:5000";
   const [appIsLoading, setAppIsLoading] = useState(false);
+  const [iconIndex, setIconIndex] = useState(0);
+  const [isBookmarkLanded, setIsBookmarkLanded] = useState(false);
+  const token = localStorage.getItem("authToken");
+
+  const loadingIcons = [
+    "fa-solid fa-cloud-sun",
+    "fa-solid fa-cloud-rain",
+    "fa-solid fa-snowflake",
+    "fa-solid fa-wind",
+  ];
+
+  useEffect(() => {
+    if (appIsLoading) {
+      const interval = setInterval(() => {
+        setIconIndex((prevIndex) => (prevIndex + 1) % loadingIcons.length);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [appIsLoading]);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -37,21 +56,30 @@ const Homepage = () => {
       const myTimer = new Promise((resolve) => {
         setTimeout(resolve, 2000);
       });
+
       const url = `${API_BASE_URL}/api/bookmarks`;
       try {
-        const apiPromise = fetch(url);
+        const apiPromise = fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const [response] = await Promise.all([apiPromise, myTimer]);
         const data = await response.json();
         const cityNames = data.map((item: any) => item.city);
         setBookmarks(cityNames);
+        setIsBookmarkLanded(true);
       } catch (error) {
         console.error(error);
+        setIsBookmarkLanded(true);
       } finally {
         setAppIsLoading(false);
       }
     };
     fetchBookmarks();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const fetchBookmarkData = async () => {
@@ -90,7 +118,7 @@ const Homepage = () => {
     };
 
     fetchBookmarkData();
-  }, []);
+  }, [bookmarks]);
 
   const onSuccess = (pos: GeolocationPosition) => {
     const lat = pos.coords.latitude;
@@ -153,12 +181,16 @@ const Homepage = () => {
     }
   };
 
-  const handleBookmark = async (city: string, currentData?: WeatherData) => {
+  const handleBookmark = async (city: string) => {
     const isBookmarked = bookmarks.includes(city);
     try {
       if (isBookmarked) {
         const response = await fetch(`${API_BASE_URL}/api/bookmarks/${city}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
         });
         if (response.ok) {
           console.log("Bookmark removed");
@@ -168,22 +200,34 @@ const Homepage = () => {
           );
           toast.info("Bookmark removed");
         }
+        else if(response.status === 401){
+          localStorage.removeItem("authToken");
+          console.log("Login again");
+          onClick()
+        }
       } else {
         const response = await fetch(`${API_BASE_URL}/api/bookmarks`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
           body: JSON.stringify({ city: city }),
         });
         if (response.ok) {
           console.log("Bookmark added");
           setBookmarks((prev) => [...prev, city]);
 
-          if(currentData){
+          if (weatherData) {
             setBookmarkDataList((prev) => {
-              const newList = [...prev , currentData];
-              return newList.sort((a , b) => a.name.localeCompare(b.name));
-            })
+              const newList = [...prev, weatherData];
+              return newList.sort((a, b) => a.name.localeCompare(b.name));
+            });
           }
+        }else if(response.status === 401){
+          localStorage.removeItem("authToken");
+          console.log("Login again");
+          onClick();
         }
       }
     } catch (error) {
@@ -192,7 +236,26 @@ const Homepage = () => {
   };
 
   if (appIsLoading) {
-    return <Loader />;
+    return (
+      <motion.div
+        className="loading_screen"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <AnimatePresence>
+          <motion.i
+            key={loadingIcons[iconIndex]} // A unique key is CRITICAL
+            className={loadingIcons[iconIndex]}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            style={{ position: "absolute", fontSize: "3rem" }}
+          ></motion.i>
+        </AnimatePresence>
+      </motion.div>
+    );
   }
 
   return (

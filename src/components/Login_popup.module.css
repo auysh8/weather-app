@@ -1,0 +1,168 @@
+/* Login_popup.module.css */
+
+/* 1. Main Card - Material You Surface Style */
+.login_container {
+    width: 100%;
+    max-width: 400px;
+    
+    /* Use your app's surface container color */
+    background: rgba(255, 255, 255, 0.85); 
+    backdrop-filter: blur(20px); /* Glass effect */
+    -webkit-backdrop-filter: blur(20px);
+    
+    /* Border matching your search bar */
+    border: 1px solid white;
+    
+    /* Large rounded corners like your weather card (2.5rem) */
+    border-radius: 2.5rem; 
+    
+    padding: 2.5rem;
+    
+    /* Soft shadow from your theme */
+    box-shadow: 0 15px 40px -5px rgba(0, 0, 100, 0.1);
+    
+    /* Use your app's main text color */
+    color: var(--md-sys-color-on-surface);
+    font-family: 'Poppins', sans-serif;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+/* 2. Header Section */
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.welcome_heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    /* Use your specific dark blue/black color */
+    color: var(--md-sys-color-on-surface); 
+    letter-spacing: -0.5px;
+}
+
+.instructions {
+    font-size: 0.95rem;
+    color: var(--md-sys-color-on-surface-variant); /* Muted text */
+    font-weight: 400;
+}
+
+/* 3. Main Form Section */
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* 4. Input Fields (Matching your Search Bar) */
+.email, .pass {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+.input_head {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface-variant);
+    margin-left: 12px;
+}
+
+.email input, .pass input {
+    /* Exact match to your Search Bar style */
+    background: var(--md-sys-color-surface-container); 
+    border: 2px solid transparent;
+    border-radius: 9999px; /* Pill shape */
+    padding: 1rem 1.5rem;
+    
+    color: var(--md-sys-color-on-surface);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.email input::placeholder, .pass input::placeholder {
+    color: var(--md-sys-color-outline);
+    opacity: 0.7;
+}
+
+/* Focus State - Material Primary Blue */
+.email input:focus, .pass input:focus {
+    background: #ffffff;
+    border-color: rgba(0, 101, 142, 0.2); /* Your Primary color but faint */
+    box-shadow: 0 4px 12px rgba(0, 101, 142, 0.1);
+}
+
+/* 5. Forgot Password */
+.forgot_pass {
+    font-size: 0.85rem;
+    color: var(--md-sys-color-primary); /* Your Primary Blue (#00658E) */
+    text-align: right;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.forgot_pass:hover {
+    text-decoration: underline;
+}
+
+/* 6. Sign In Button (Matching Weather Card logic) */
+.sign_in {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border-radius: 9999px; /* Pill shape */
+    border: none;
+    
+    /* The big blue button style */
+    background: var(--md-sys-color-primary); 
+    color: var(--md-sys-color-on-primary);
+    
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 101, 142, 0.3);
+}
+
+.sign_in:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 101, 142, 0.4);
+    background: #005a80; /* Slightly darker on hover */
+}
+
+.sign_in:active {
+    transform: translateY(0);
+}
+
+/* 7. Footer Section */
+footer {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.signup_link {
+    color: var(--md-sys-color-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup_link:hover {
+    text-decoration: underline;
+}
