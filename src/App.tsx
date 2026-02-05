@@ -5,12 +5,14 @@ import { useState } from "react";
 import "./App.css";
 import Login_popup from "./components/Login_popup";
 import Register_popup from "./components/Register_popup";
+import { AnimatePresence } from "framer-motion";
 
 const App = () => {
   const [isLoginPopup, setIsLoginPopup] = useState(false);
   const [isResgisterPopup, setIsRegisterPopup] = useState(false);
   return (
     <div>
+      <AnimatePresence>
       {isLoginPopup && (
         <div className="popup_backdrop" onClick={() => setIsLoginPopup(false)}>
           <div onClick={(e) => e.stopPropagation()}>
@@ -39,6 +41,7 @@ const App = () => {
           </div>
         </div>
       )}
+      </AnimatePresence>
       <Routes>
         <Route
           path="/"

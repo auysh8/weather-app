@@ -30,7 +30,6 @@ const Homepage = ({ onClick }) => {
   const API_BASE_URL = "http://localhost:5000";
   const [appIsLoading, setAppIsLoading] = useState(false);
   const [iconIndex, setIconIndex] = useState(0);
-  const [isBookmarkLanded, setIsBookmarkLanded] = useState(false);
   const token = localStorage.getItem("authToken");
 
   const loadingIcons = [
@@ -189,7 +188,7 @@ const Homepage = ({ onClick }) => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (response.ok) {
@@ -199,11 +198,10 @@ const Homepage = ({ onClick }) => {
             prev.filter((item) => item.name !== city),
           );
           toast.info("Bookmark removed");
-        }
-        else if(response.status === 401){
+        } else if (response.status === 401) {
           localStorage.removeItem("authToken");
           console.log("Login again");
-          onClick()
+          onClick();
         }
       } else {
         const response = await fetch(`${API_BASE_URL}/api/bookmarks`, {
@@ -224,7 +222,7 @@ const Homepage = ({ onClick }) => {
               return newList.sort((a, b) => a.name.localeCompare(b.name));
             });
           }
-        }else if(response.status === 401){
+        } else if (response.status === 401) {
           localStorage.removeItem("authToken");
           console.log("Login again");
           onClick();

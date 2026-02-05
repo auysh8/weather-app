@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styles from "./Login_popup.module.css";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Login_popup = ({ isRegister, onSuccess }) => {
   const API_BASE_URL = "http://localhost:5000";
@@ -20,11 +22,20 @@ const Login_popup = ({ isRegister, onSuccess }) => {
       window.dispatchEvent(new Event("storage-update"));
       if (token) onSuccess();
     } catch (error) {
+      if (error.response || error.response.status === 400) {
+        toast.error("User not found, Please register");
+      }
       console.log(error);
     }
   };
   return (
-    <div className={styles.login_container}>
+    <motion.div
+      className={styles.login_container}
+      initial={{ opacity: 0}}
+      animate={{ opacity: 1}}
+      exit={{ opacity: 0}}
+      transition={{duration: 0.3}}
+    >
       <header className={styles.header}>
         <span className={styles.welcome_heading}>Welcome back</span>
         <span className={styles.instructions}>
@@ -57,11 +68,11 @@ const Login_popup = ({ isRegister, onSuccess }) => {
       </main>
       <footer>
         <span className={styles.footer_message}>Dont have a account?</span>
-        <button onClick={() => isRegister()}>
+        <button className={styles.signup} onClick={() => isRegister()}>
           <span>Sign up</span>
         </button>
       </footer>
-    </div>
+    </motion.div>
   );
 };
 
