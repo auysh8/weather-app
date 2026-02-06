@@ -208,7 +208,7 @@ const Homepage = ({ onClick }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ city: city }),
         });
@@ -266,7 +266,7 @@ const Homepage = ({ onClick }) => {
           </span>
         </div>
 
-        <Search_bar onSearch={getWeather} />
+        <Search_bar onSearch={getWeather}/>
 
         <AnimatePresence mode="wait">
           {weatherData && (

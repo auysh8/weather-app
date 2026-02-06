@@ -5,20 +5,23 @@ type SearchBarProps = {
   onSearch: (city: string) => void;
 };
 
-interface HistroyItems{
-  _id: string,
-  city: string
-
+interface HistroyItems {
+  _id: string;
+  city: string;
 }
 
 const Search_bar = ({ onSearch }: SearchBarProps) => {
   const [isDropdown, setIsDropdown] = useState(false);
   const [history, setHistory] = useState<HistroyItems[]>([]);
+  const [query, setQuery] = useState("");
   const API_BASE_URL = "http://localhost:5000";
 
-  const fetchHistory = async () => {
+  const fetchHistory = async (cityName = "") => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/history`);
+      console.log("Fetching history for:", cityName);
+      const response = await fetch(
+        `${API_BASE_URL}/api/history?search=${cityName}`,
+      );
       const data = await response.json();
       setHistory(data);
       console.log(data);
@@ -28,13 +31,17 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
   };
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchHistory(query);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const handleSearch = async (cityName: string) => {
+    setQuery(cityName);
     onSearch(cityName);
     setIsDropdown(false);
-
     try {
       await fetch(`${API_BASE_URL}/api/history`, {
         method: "POST",
@@ -47,9 +54,12 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement> , cityName: string) => {
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    cityName: string,
+  ) => {
     if (event.key === "Enter") {
-      handleSearch(cityName);
+      handleSearch(query);
     }
   };
 
@@ -65,19 +75,18 @@ const Search_bar = ({ onSearch }: SearchBarProps) => {
           id="search_input"
           type="text"
           placeholder="Enter city name"
+          value={query}
           onChange={(event) => {
-            setIsDropdown(false);
-            if(event.target.value == ""){
-              setIsDropdown(true);
-            }
-            else{
-              setIsDropdown(false)
-            }
+            const val = event.target.value;
+            setQuery(val);
+            setIsDropdown(true);
           }}
-          onKeyDown={(event) => handleKeyDown(event , (event.target as HTMLInputElement).value )}
+          onKeyDown={(event) =>
+            handleKeyDown(event, (event.target as HTMLInputElement).value)
+          }
         />
       </div>
-      {isDropdown && (
+      {isDropdown && history.length > 0 && (
         <div className="dropdown">
           {history.map((item) => (
             <div
