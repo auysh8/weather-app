@@ -27,7 +27,7 @@ const Homepage = ({ onClick }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [bookmarkDataList, setBookmarkDataList] = useState<WeatherData[]>([]);
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
   const [appIsLoading, setAppIsLoading] = useState(false);
   const [iconIndex, setIconIndex] = useState(0);
   const token = localStorage.getItem("authToken");
@@ -192,7 +192,6 @@ const Homepage = ({ onClick }) => {
           },
         });
         if (response.ok) {
-          console.log("Bookmark removed");
           setBookmarks((prev) => prev.filter((cityname) => cityname != city));
           setBookmarkDataList((prev) =>
             prev.filter((item) => item.name !== city),
@@ -200,7 +199,6 @@ const Homepage = ({ onClick }) => {
           toast.info("Bookmark removed");
         } else if (response.status === 401) {
           localStorage.removeItem("authToken");
-          console.log("Login again");
           onClick();
         }
       } else {
@@ -213,7 +211,6 @@ const Homepage = ({ onClick }) => {
           body: JSON.stringify({ city: city }),
         });
         if (response.ok) {
-          console.log("Bookmark added");
           setBookmarks((prev) => [...prev, city]);
 
           if (weatherData) {
@@ -224,7 +221,6 @@ const Homepage = ({ onClick }) => {
           }
         } else if (response.status === 401) {
           localStorage.removeItem("authToken");
-          console.log("Login again");
           onClick();
         }
       }

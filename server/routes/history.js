@@ -1,13 +1,14 @@
 const router = require("express").Router();
 const History = require("../models/History");
+const verifyToken = require("../middleware/auth");
 
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   const searchQuery = req.query.search || "";
-  console.log("Search Query:", searchQuery);
+  const userId = req.user.id;
   try {
-    let filter = {};
-    if(searchQuery){
-      filter = {city: { $regex: searchQuery, $options: "i" }};
+    let filter = { user: userId };
+    if (searchQuery) {
+      filter = { ...filter, city: { $regex: searchQuery, $options: "i" } };
     }
     const history = await History.find(filter).sort({ searchAt: -1 }).limit(3);
     res.json(history);
@@ -16,18 +17,19 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { cityName } = req.body;
+  const userId = req.user.id;
   if (!cityName) return res.status(400).json({ message: "City required" });
 
   try {
-    await History.findOneAndDelete({ city: cityName });
-    const newSearch = new History({ city: cityName });
+    await History.findOneAndDelete({ city: cityName , user: userId});
+    const newSearch = new History({ city: cityName , user: userId});
     await newSearch.save();
 
-    const count = await History.countDocuments();
+    const count = await History.countDocuments({user : userId});
     if (count > 20) {
-      const oldestEntry = await History.findOne().sort({ searchAt: 1 });
+      const oldestEntry = await History.findOne({user : userId}).sort({ searchAt: 1 });
       if (oldestEntry) await History.findByIdAndDelete(oldestEntry._id);
     }
     res.status(201).json(newSearch);

@@ -8,7 +8,7 @@ const Register_popup = ({ isLogin }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
 
   const formData = {
     username: username,
@@ -29,9 +29,9 @@ const Register_popup = ({ isLogin }) => {
       if (error.response && error.response.status === 400) {
         console.log("User already registered");
       } else {
-        console.log("Server error", error.message);
+        console.error("Server error", error.message);
       }
-      console.log(error);
+      toast.error("Invalid credentials")
     }
   };
   return (

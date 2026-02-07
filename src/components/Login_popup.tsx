@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Login_popup = ({ isRegister, onSuccess }) => {
-  const API_BASE_URL = "http://localhost:5000";
+  const API_BASE_URL = "https://weather-app-za51.onrender.com";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,24 +17,24 @@ const Login_popup = ({ isRegister, onSuccess }) => {
     try {
       const url = `${API_BASE_URL}/auth/login`;
       const response = await axios.post(url, formData);
-      const token = await response.data.token;
+      const token = response.data.token;
       localStorage.setItem("authToken", token);
       window.dispatchEvent(new Event("storage-update"));
       if (token) onSuccess();
     } catch (error) {
-      if (error.response || error.response.status === 400) {
-        toast.error("User not found, Please register");
+      if (error.response || error.response?.status === 400) {
+        toast.error("Invalid credentials");
       }
-      console.log(error);
+      setPassword("");
     }
   };
   return (
     <motion.div
       className={styles.login_container}
-      initial={{ opacity: 0}}
-      animate={{ opacity: 1}}
-      exit={{ opacity: 0}}
-      transition={{duration: 0.3}}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <header className={styles.header}>
         <span className={styles.welcome_heading}>Welcome back</span>
@@ -55,10 +55,11 @@ const Login_popup = ({ isRegister, onSuccess }) => {
         <label className={styles.pass} htmlFor="pass">
           <span className={styles.input_head}>Password</span>
           <input
-            type="text"
+            type="password"
             id="pass"
             placeholder="Enter your password"
             onChange={(e) => setPassword(e.target.value)}
+            value={password}
           />
         </label>
         <span className={styles.forgot_pass}>Forgot password?</span>
